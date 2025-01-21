@@ -107,5 +107,37 @@ namespace TaskFlow.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult MarkAsComplete(int id)
+        {
+            var task = _context.TaskItems.Find(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            task.IsCompleted = true;
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult UndoCompletion(int id)
+        {
+            var task = _context.TaskItems.Find(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            task.IsCompleted = false;
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
     }
 }
