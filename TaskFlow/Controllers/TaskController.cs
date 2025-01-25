@@ -13,10 +13,27 @@ namespace TaskFlow.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? sortBy = null)
         {
-            var tasks = _context.TaskItems.ToList();
-            return View(tasks);
+            var tasks = _context.TaskItems.AsQueryable();
+
+            switch (sortBy)
+            {
+                case "title":
+                    tasks = tasks.OrderBy(t => t.Title);
+                    break;
+                case "created_at":
+                    tasks = tasks.OrderBy(t => t.CreatedAt);
+                    break;
+                case "status":
+                    tasks = tasks.OrderBy(t => t.IsCompleted);
+                    break;
+                default:
+                    tasks = tasks.OrderByDescending(t => t.CreatedAt); // Default: Newest first
+                    break;
+            }
+
+            return View(tasks.ToList());
         }
 
         public IActionResult Create()
@@ -137,7 +154,5 @@ namespace TaskFlow.Controllers
 
             return RedirectToAction("Index");
         }
-
-
     }
 }
