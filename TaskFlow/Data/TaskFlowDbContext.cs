@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using TaskFlow.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskFlow.Models; // Ensure this matches your models namespace
 
 namespace TaskFlow.Data
 {
-    public class TaskFlowDbContext : IdentityDbContext<IdentityUser>
+    public class TaskFlowDbContext : DbContext
     {
         public TaskFlowDbContext(DbContextOptions<TaskFlowDbContext> options) : base(options)
         {
         }
 
-        public DbSet<TaskItem> TaskItems { get; set; }
+        // Define DbSets (tables)
+        public DbSet<TaskItem> TaskItems { get; set; } // Example entity
     }
 }
