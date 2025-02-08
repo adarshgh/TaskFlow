@@ -11,5 +11,6 @@ namespace TaskFlow.Data
 
         // Define DbSets (tables)
         public DbSet<TaskItem> TaskItems { get; set; } // Example entity
+        public DbSet<User> Users { get; set; }
     }
 }
