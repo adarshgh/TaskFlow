@@ -1,51 +1,50 @@
 ﻿@model IEnumerable<TaskFlow.Models.TaskItem>
 
-@{
-    ViewData["Title"] = "Task List";
-}
-
 <h2>Task List</h2>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Task</a>
-</p>
+<!-- ✅ Add the Create Task Button Back -->
+<a class="btn btn-primary mb-3" asp-action="Create">Create New Task</a>
 
-<table class="table table-striped">
+<table class="table">
     <thead>
         <tr>
-            <th><a asp-action="Index" asp-route-sortBy="title">Title ⬍</a></th>
+            <th><a asp-action="Index" asp-route-sortBy="title">Title ⇅</a></th>
             <th>Description</th>
-            <th><a asp-action="Index" asp-route-sortBy="status">Status ⬍</a></th>
-            <th><a asp-action="Index" asp-route-sortBy="created_at">Created At ⬍</a></th>
+            <th><a asp-action="Index" asp-route-sortBy="status">Status ⇅</a></th>
+            <th><a asp-action="Index" asp-route-sortBy="created_at">Created At ⇅</a></th>
+            <th>Assigned To</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var task in Model)
         {
             <tr>
-                <td>@item.Title</td>
-                <td>@item.Description</td>
-                <td>@(item.IsCompleted ? "✅" : "❌")</td>
-                <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@task.Title</td>
+                <td>@task.Description</td>
+                <td>@(task.IsCompleted ? "✅" : "❌")</td>
+                <td>@task.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(task.User != null ? task.User.Username : "Unassigned")</td>
                 <td>
-                    @if (!item.IsCompleted)
+                    @if (!task.IsCompleted)
                     {
-                        <form asp-action="MarkAsComplete" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn btn-success btn-sm">Complete</button>
+                        <form method="post" asp-action="MarkAsComplete" asp-route-id="@task.Id" style="display:inline;">
+                            <button type="submit" class="btn btn-success">Complete</button>
                         </form>
                     }
                     else
                     {
-                        <form asp-action="UndoCompletion" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn btn-warning btn-sm">Undo</button>
+                        <form method="post" asp-action="UndoCompletion" asp-route-id="@task.Id" style="display:inline;">
+                            <button type="submit" class="btn btn-warning">Undo</button>
                         </form>
                     }
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@task.Id">Edit</a>
+                    <a class="btn btn-info" asp-action="Details" asp-route-id="@task.Id">Details</a>
+
+                    <form method="post" asp-action="Delete" asp-route-id="@task.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

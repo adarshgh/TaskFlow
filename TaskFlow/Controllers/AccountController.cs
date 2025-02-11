@@ -88,13 +88,16 @@ namespace TaskFlow.Controllers
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Username)
-            };
+        new Claim(ClaimTypes.Name, user.Username),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Role, user.Role) // ✅ FIX: Ensure role is included in authentication claims
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
+
     }
 }

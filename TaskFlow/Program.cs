@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Data;
+using TaskFlow.Models;
+using System;
+using System.Linq;
+using BCrypt.Net; // Needed for password hashing
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +28,32 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// Apply pending migrations and seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<TaskFlowDbContext>();
+    context.Database.Migrate(); // Apply any pending migrations
+
+    // ? Create an Admin user if it doesn't exist
+    if (!context.Users.Any(u => u.Role == "Admin"))
+    {
+        Console.WriteLine("Creating default Admin user...");
+
+        var admin = new User
+        {
+            Username = "admin",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"), // Default password: "admin"
+            Role = "Admin"
+        };
+
+        context.Users.Add(admin);
+        context.SaveChanges();
+
+        Console.WriteLine("Admin user created successfully!");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

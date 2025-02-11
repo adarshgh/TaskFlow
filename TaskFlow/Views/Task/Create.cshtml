@@ -9,7 +9,7 @@
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" />
+        <input asp-for="Title" class="form-control" required />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
 
@@ -17,6 +17,15 @@
         <label asp-for="Description"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- ✅ FIX: Allow all users to see the Assign To dropdown -->
+    <div class="form-group">
+        <label asp-for="UserId">Assign To</label>
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users">
+            <option value="">-- Select User --</option>
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Create</button>

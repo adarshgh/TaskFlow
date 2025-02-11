@@ -12,6 +12,10 @@ namespace TaskFlow.Models
         public string Username { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; } // Store hashed passwords
+        public string PasswordHash { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        public string Role { get; set; } = "User"; // Default role is 'User'
     }
 }
