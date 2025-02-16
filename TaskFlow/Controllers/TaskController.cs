@@ -44,6 +44,9 @@ namespace TaskFlow.Controllers
                 case "status":
                     tasks = tasks.OrderBy(t => t.IsCompleted);
                     break;
+                case "assigned_to": // ✅ NEW: Sorting by assigned user
+                    tasks = tasks.OrderBy(t => t.User != null ? t.User.Username : "Unassigned");
+                    break;
                 default:
                     tasks = tasks.OrderByDescending(t => t.CreatedAt);
                     break;
@@ -97,19 +100,25 @@ namespace TaskFlow.Controllers
 
         public IActionResult Edit(int id)
         {
-            var task = _context.TaskItems.Include(t => t.User).FirstOrDefault(t => t.Id == id);
+            var task = _context.TaskItems.Find(id);
             if (task == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Users = new SelectList(_context.Users.Where(u => u.Role != "Admin"), "Id", "Username", task.UserId);
+            var viewModel = new TaskItemViewModel
+            {
+                Title = task.Title,
+                Description = task.Description,
+                UserId = task.UserId
+            };
 
-            return View(task);
+            ViewBag.Users = new SelectList(_context.Users, "Id", "Username", task.UserId);
+            return View(viewModel); // ✅ FIX: Pass the correct ViewModel type
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, TaskItem model)
+        public IActionResult Edit(int id, TaskItemViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -121,15 +130,16 @@ namespace TaskFlow.Controllers
 
                 task.Title = model.Title;
                 task.Description = model.Description;
-                task.UserId = model.UserId; // Assign task to selected user
+                task.UserId = model.UserId; // ✅ FIX: Ensure user assignment is updated
 
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Users = new SelectList(_context.Users.Where(u => u.Role != "Admin"), "Id", "Username", model.UserId);
+            ViewBag.Users = new SelectList(_context.Users, "Id", "Username", model.UserId);
             return View(model);
         }
+
 
         public IActionResult Delete(int id)
         {

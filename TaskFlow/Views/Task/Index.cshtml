@@ -12,7 +12,7 @@
             <th>Description</th>
             <th><a asp-action="Index" asp-route-sortBy="status">Status ⇅</a></th>
             <th><a asp-action="Index" asp-route-sortBy="created_at">Created At ⇅</a></th>
-            <th>Assigned To</th>
+            <th><a asp-action="Index" asp-route-sortBy="assigned_to">Assigned To ⇅</a></th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -40,7 +40,7 @@
                     }
 
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@task.Id">Edit</a>
-                    <a class="btn btn-info" asp-action="Details" asp-route-id="@task.Id">Details</a>
+                    
 
                     <form method="post" asp-action="Delete" asp-route-id="@task.Id" style="display:inline;">
                         <button type="submit" class="btn btn-danger">Delete</button>
